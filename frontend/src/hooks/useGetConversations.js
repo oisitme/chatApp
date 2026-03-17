@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useConversation from "../zustand/useConversation";
 import { normalizeUser } from "../utils/user";
+import { apiFetch } from "../utils/api";
 
 const useGetConversations = () => {
 	const [loading, setLoading] = useState(false);
@@ -13,7 +14,7 @@ const useGetConversations = () => {
 
 			setLoading(true);
 			try {
-				const res = await fetch("/api/users");
+				const res = await apiFetch("/api/users");
 				const data = await res.json();
 				if (data.error) {
 					throw new Error(data.error);

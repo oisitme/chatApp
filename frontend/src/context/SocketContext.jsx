@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { useAuthContext } from "./AuthContext";
 import io from "socket.io-client";
+import { SOCKET_URL } from "../utils/api";
 
 const SocketContext = createContext();
 
@@ -18,13 +19,14 @@ export const SocketContextProvider = ({ children }) => {
 			const isDev = import.meta.env.DEV;
 			const socketUrl = isDev
 				? `${window.location.protocol}//${window.location.hostname}:5000`
-				: undefined;
+				: SOCKET_URL || undefined;
 
 			const socket = io(socketUrl, {
 				query: {
 					userId: authUser._id,
 				},
 				transports: ["websocket", "polling"],
+				withCredentials: true,
 			});
 
 			setSocket(socket);
