@@ -1,0 +1,34 @@
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import useConversation from "../zustand/useConversation";
+import { normalizeUser } from "../utils/user";
+
+const useGetConversations = () => {
+	const [loading, setLoading] = useState(false);
+	const { conversations, setConversations } = useConversation();
+
+	useEffect(() => {
+		const getConversations = async () => {
+			if (conversations.length > 0) return;
+
+			setLoading(true);
+			try {
+				const res = await fetch("/api/users");
+				const data = await res.json();
+				if (data.error) {
+					throw new Error(data.error);
+				}
+				setConversations(data.map(normalizeUser).filter(Boolean));
+			} catch (error) {
+				toast.error(error.message);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		getConversations();
+	}, [conversations.length, setConversations]);
+
+	return { loading, conversations };
+};
+export default useGetConversations;
